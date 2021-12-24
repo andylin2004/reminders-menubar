@@ -100,10 +100,17 @@ class RemindersService {
         }
     }
     
-    func createNew(with title: String, in calendar: EKCalendar) {
+    func createNew(with title: String, in calendar: EKCalendar, remindOn: Date, includeDate: Bool, includeTime: Bool) {
         let newReminder = EKReminder(eventStore: eventStore)
         newReminder.title = title
         newReminder.calendar = calendar
+        if (includeDate){
+            if (includeTime){
+                newReminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: remindOn)
+            }else{
+                newReminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day], from: remindOn)
+            }
+        }
         save(reminder: newReminder)
     }
     

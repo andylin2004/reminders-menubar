@@ -7,6 +7,7 @@ struct FormNewReminderView: View {
     
     @State var newReminderTitle = ""
     @State var remindOnDate = false
+    @State var remindAtTime = false
     @State var date = Date()
     
     var body: some View {
@@ -16,7 +17,7 @@ struct FormNewReminderView: View {
                     TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
                         guard !newReminderTitle.isEmpty else { return }
                         
-                        RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving)
+                        RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving, remindOn: date, includeDate: remindOnDate,includeTime: remindAtTime)
                         newReminderTitle = ""
                     })
                     .padding(.vertical, 8)
@@ -36,9 +37,20 @@ struct FormNewReminderView: View {
                             .padding(.leading, 8)
                     )
                     
-                    HStack(spacing:0){
-                        Toggle("Remind on: ", isOn: $remindOnDate)
-                        DatePicker("", selection: $date)
+                    HStack{
+                        Text("Remind on")
+                        VStack{
+                            HStack(spacing:0){
+                                Toggle("Day:", isOn: $remindOnDate)
+                                DatePicker("", selection: $date, displayedComponents: [.date])
+                            }
+                            if (remindOnDate){
+                                HStack(spacing:0){
+                                    Toggle("Time:", isOn: $remindAtTime)
+                                    DatePicker("", selection: $date, displayedComponents: [.hourAndMinute])
+                                }
+                            }
+                        }
                     }
                 }
                 
