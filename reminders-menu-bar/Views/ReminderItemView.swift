@@ -3,6 +3,7 @@ import EventKit
 
 struct ReminderItemView: View {
     @EnvironmentObject var remindersData: RemindersData
+    @ObservedObject var userPreferences = UserPreferences.instance
     
     var reminder: EKReminder
     var showCalendarTitleOnDueDate = false
@@ -76,6 +77,7 @@ struct ReminderItemView: View {
                     .popover(isPresented: $showingDateChange){
                         ReminderDateView(remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, date: $remindDate)
                             .padding(10)
+                            .background(Color("backgroundTheme").opacity(userPreferences.backgroundIsTransparent ? 0.3 : 1.0))
                     }
                 }
                 .alert(isPresented: $showingRemoveAlert) {
