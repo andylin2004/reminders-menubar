@@ -12,7 +12,7 @@ struct ReminderItemView: View {
     @State private var showingDateChange = false
     @State private var remindOnDate = false
     @State private var remindAtTime = false
-    @State private var date = Date()
+    @State private var remindDate = Date()
     
     var body: some View {
         HStack(alignment: .top) {
@@ -50,7 +50,7 @@ struct ReminderItemView: View {
                         }){
                             HStack {
                                 Image(systemName: "calendar")
-                                Text("Change Due Date")
+                                Text(rmbLocalized(.changeDueDate))
                             }
                         }
                         
@@ -74,22 +74,8 @@ struct ReminderItemView: View {
                     .help(rmbLocalized(.remindersOptionsButtonHelp))
                     .opacity(reminderItemIsHovered ? 1 : 0)
                     .popover(isPresented: $showingDateChange){
-                        HStack{
-                            Text("Remind on")
-                            VStack{
-                                HStack(spacing:0){
-                                    Toggle("Day:", isOn: $remindOnDate)
-                                    DatePicker("", selection: $date, displayedComponents: [.date])
-                                }
-                                if (remindOnDate){
-                                    HStack(spacing:0){
-                                        Toggle("Time:", isOn: $remindAtTime)
-                                        DatePicker("", selection: $date, displayedComponents: [.hourAndMinute])
-                                    }
-                                }
-                            }
-                        }
-                        .padding(10)
+                        ReminderDateView(remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, date: $remindDate)
+                            .padding(10)
                     }
                 }
                 .alert(isPresented: $showingRemoveAlert) {
@@ -149,14 +135,14 @@ struct ReminderItemView: View {
         .onChange(of: showingDateChange){change in
             if change{
                 if reminder.hasDueDate{
-                    date = Calendar.current.date(from: reminder.dueDateComponents!)!
+                    remindDate = Calendar.current.date(from: reminder.dueDateComponents!)!
                     remindOnDate = true
                     if reminder.dueDateComponents?.hour != nil && reminder.dueDateComponents?.minute != nil{
                         remindAtTime = true
                     }
                 }
             }else{
-                RemindersService.instance.changeDate(reminder: reminder, remindOn: date, includeDate: remindOnDate, includeTime: remindAtTime)
+                RemindersService.instance.changeDate(reminder: reminder, remindOn: remindDate, includeDate: remindOnDate, includeTime: remindAtTime)
             }
         }
     }

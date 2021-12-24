@@ -8,7 +8,7 @@ struct FormNewReminderView: View {
     @State var newReminderTitle = ""
     @State var remindOnDate = false
     @State var remindAtTime = false
-    @State var date = Date()
+    @State var remindDate = Date()
     
     var body: some View {
         VStack {
@@ -17,7 +17,7 @@ struct FormNewReminderView: View {
                     TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
                         guard !newReminderTitle.isEmpty else { return }
                         
-                        RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving, remindOn: date, includeDate: remindOnDate,includeTime: remindAtTime)
+                        RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving, remindOn: remindDate, includeDate: remindOnDate,includeTime: remindAtTime)
                         newReminderTitle = ""
                     })
                     .padding(.vertical, 8)
@@ -37,21 +37,7 @@ struct FormNewReminderView: View {
                             .padding(.leading, 8)
                     )
                     
-                    HStack{
-                        Text("Remind on")
-                        VStack{
-                            HStack(spacing:0){
-                                Toggle("Day:", isOn: $remindOnDate)
-                                DatePicker("", selection: $date, displayedComponents: [.date])
-                            }
-                            if (remindOnDate){
-                                HStack(spacing:0){
-                                    Toggle("Time:", isOn: $remindAtTime)
-                                    DatePicker("", selection: $date, displayedComponents: [.hourAndMinute])
-                                }
-                            }
-                        }
-                    }
+                    ReminderDateView(remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, date: $remindDate)
                 }
                 
                 Menu {
