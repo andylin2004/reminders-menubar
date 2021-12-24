@@ -11,7 +11,7 @@ struct FormNewReminderView: View {
     @State var date = Date()
     
     var body: some View {
-        Form {
+        VStack {
             HStack {
                 VStack{
                     TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
