@@ -6,32 +6,41 @@ struct FormNewReminderView: View {
     @ObservedObject var userPreferences = UserPreferences.instance
     
     @State var newReminderTitle = ""
+    @State var remindOnDate = false
+    @State var date = Date()
     
     var body: some View {
         Form {
             HStack {
-                TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
-                    guard !newReminderTitle.isEmpty else { return }
+                VStack{
+                    TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
+                        guard !newReminderTitle.isEmpty else { return }
+                        
+                        RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving)
+                        newReminderTitle = ""
+                    })
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 8)
+                    .padding(.leading, 22)
+                    .background(
+                        userPreferences.backgroundIsTransparent ?
+                            Color("textFieldBackgroundTransparent") :
+                            Color("textFieldBackground")
+                    )
+                    .cornerRadius(8)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .overlay(
+                        Image(systemName: "plus.circle.fill")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.gray)
+                            .padding(.leading, 8)
+                    )
                     
-                    RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving)
-                    newReminderTitle = ""
-                })
-                .padding(.vertical, 8)
-                .padding(.horizontal, 8)
-                .padding(.leading, 22)
-                .background(
-                    userPreferences.backgroundIsTransparent ?
-                        Color("textFieldBackgroundTransparent") :
-                        Color("textFieldBackground")
-                )
-                .cornerRadius(8)
-                .textFieldStyle(PlainTextFieldStyle())
-                .overlay(
-                    Image(systemName: "plus.circle.fill")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.gray)
-                        .padding(.leading, 8)
-                )
+                    HStack(spacing:0){
+                        Toggle("Remind on: ", isOn: $remindOnDate)
+                        DatePicker("", selection: $date)
+                    }
+                }
                 
                 Menu {
                     ForEach(remindersData.calendars, id: \.calendarIdentifier) { calendar in
