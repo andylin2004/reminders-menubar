@@ -127,6 +127,18 @@ class RemindersService {
         NotificationCenter.default.post(name: .EKEventStoreChanged, object: nil)
     }
     
+    func changeDate(reminder: EKReminder, remindOn: Date, includeDate: Bool, includeTime: Bool){
+        if includeDate{
+            if includeTime{
+                reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: remindOn)
+            }else{
+                reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day], from: remindOn)
+            }
+        }else{
+            reminder.dueDateComponents = Calendar.current.dateComponents([], from: remindOn)
+        }
+    }
+    
     func commitChanges() {
         do {
             try eventStore.commit()

@@ -9,6 +9,10 @@ struct ReminderItemView: View {
     @State var reminderItemIsHovered = false
     @State private var showingRemoveAlert = false
     @State private var hasBeenRemoved = false
+    @State private var showingDateChange = false
+    @State private var remindOnDate = false
+    @State private var remindAtTime = false
+    @State private var date = Date()
     
     var body: some View {
         HStack(alignment: .top) {
@@ -39,10 +43,19 @@ struct ReminderItemView: View {
                         }
                         if !otherCalendars.isEmpty {
                             MoveToOptionMenu(reminder: reminder, availableCalendars: otherCalendars)
-                            
-                            VStack {
-                                Divider()
+                        }
+                        
+                        Button(action: {
+                            showingDateChange = true
+                        }){
+                            HStack {
+                                Image(systemName: "calendar")
+                                Text("Change Due Date")
                             }
+                        }
+                        
+                        VStack {
+                            Divider()
                         }
                         
                         Button(action: {
@@ -60,6 +73,24 @@ struct ReminderItemView: View {
                     .padding(.trailing, 10)
                     .help(rmbLocalized(.remindersOptionsButtonHelp))
                     .opacity(reminderItemIsHovered ? 1 : 0)
+                    .popover(isPresented: $showingDateChange){
+                        HStack{
+                            Text("Remind on")
+                            VStack{
+                                HStack(spacing:0){
+                                    Toggle("Day:", isOn: $remindOnDate)
+                                    DatePicker("", selection: $date, displayedComponents: [.date])
+                                }
+                                if (remindOnDate){
+                                    HStack(spacing:0){
+                                        Toggle("Time:", isOn: $remindAtTime)
+                                        DatePicker("", selection: $date, displayedComponents: [.hourAndMinute])
+                                    }
+                                }
+                            }
+                        }
+                        .padding(10)
+                    }
                 }
                 .alert(isPresented: $showingRemoveAlert) {
                     Alert(title: Text(rmbLocalized(.removeReminderAlertTitle)),
@@ -115,6 +146,19 @@ struct ReminderItemView: View {
                 RemindersService.instance.commitChanges()
             }
         })
+        .onChange(of: showingDateChange){change in
+            if change{
+                if reminder.hasDueDate{
+                    date = Calendar.current.date(from: reminder.dueDateComponents!)!
+                    remindOnDate = true
+                    if reminder.dueDateComponents?.hour != nil && reminder.dueDateComponents?.minute != nil{
+                        remindAtTime = true
+                    }
+                }
+            }else{
+                RemindersService.instance.changeDate(reminder: reminder, remindOn: date, includeDate: remindOnDate, includeTime: remindAtTime)
+            }
+        }
     }
 }
 
