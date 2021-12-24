@@ -135,7 +135,7 @@ class RemindersService {
                 reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day], from: remindOn)
             }
         }else{
-            reminder.dueDateComponents = Calendar.current.dateComponents([], from: remindOn)
+            reminder.dueDateComponents = nil
         }
     }
     
