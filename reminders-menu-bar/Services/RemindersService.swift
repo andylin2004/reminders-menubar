@@ -137,6 +137,7 @@ class RemindersService {
         }else{
             reminder.dueDateComponents = nil
         }
+        save(reminder: reminder)
     }
     
     func commitChanges() {
