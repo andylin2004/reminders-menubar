@@ -104,14 +104,7 @@ class RemindersService {
         let newReminder = EKReminder(eventStore: eventStore)
         newReminder.title = title
         newReminder.calendar = calendar
-        if (includeDate){
-            if (includeTime){
-                newReminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: remindOn)
-            }else{
-                newReminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day], from: remindOn)
-            }
-        }
-        save(reminder: newReminder)
+        changeDate(reminder: newReminder, remindOn: remindOn, includeDate: includeDate, includeTime: includeTime)
     }
     
     func remove(reminder: EKReminder) {
