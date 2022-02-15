@@ -10,7 +10,6 @@ import SwiftUI
 
 struct ReminderTitleTextField: NSViewRepresentable{
     let placeholderTitle: String
-    @Binding var newReminderTitle: String
     @Binding var remindOnDate: Bool
     @Binding var remindAtTime: Bool
     @Binding var remindDate: Date
@@ -55,6 +54,6 @@ struct ReminderTitleTextField: NSViewRepresentable{
 
 struct ReminderTitleTextField_Previews: PreviewProvider {
     static var previews: some View {
-        ReminderTitleTextField(placeholderTitle: rmbLocalized(.newReminderTextFielPlaceholder), newReminderTitle: .constant(""), remindOnDate: .constant(true), remindAtTime: .constant(true), remindDate: .constant(Date()))
+        ReminderTitleTextField(placeholderTitle: rmbLocalized(.newReminderTextFielPlaceholder), remindOnDate: .constant(true), remindAtTime: .constant(true), remindDate: .constant(Date()))
     }
 }

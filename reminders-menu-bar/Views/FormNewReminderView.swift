@@ -5,7 +5,6 @@ struct FormNewReminderView: View {
     @EnvironmentObject var remindersData: RemindersData
     @ObservedObject var userPreferences = UserPreferences.instance
     
-    @State var newReminderTitle = ""
     @State var remindOnDate = false
     @State var remindAtTime = false
     @State var remindDate = Date()
@@ -14,7 +13,7 @@ struct FormNewReminderView: View {
         VStack {
             HStack {
                 VStack{
-                    ReminderTitleTextField(placeholderTitle: rmbLocalized(.newReminderTextFielPlaceholder), newReminderTitle: $newReminderTitle, remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, remindDate: $remindDate)
+                    ReminderTitleTextField(placeholderTitle: rmbLocalized(.newReminderTextFielPlaceholder), remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, remindDate: $remindDate)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 8)
                     .padding(.leading, 22)
