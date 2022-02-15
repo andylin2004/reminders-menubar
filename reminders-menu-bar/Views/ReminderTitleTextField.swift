@@ -42,6 +42,9 @@ struct ReminderTitleTextField: NSViewRepresentable{
         
         func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if (commandSelector == #selector(NSResponder.insertNewline(_:))) {
+                guard !textView.string.isEmpty else {
+                    return false
+                }
                 RemindersService.instance.createNew(with: textView.string, in: parent.userPreferences.calendarForSaving, remindOn: parent.remindDate, includeDate: parent.remindOnDate, includeTime: parent.remindAtTime)
                 textView.string = ""
                 return true
