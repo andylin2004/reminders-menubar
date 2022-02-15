@@ -14,12 +14,7 @@ struct FormNewReminderView: View {
         VStack {
             HStack {
                 VStack{
-                    TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
-                        guard !newReminderTitle.isEmpty else { return }
-                        
-                        RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving, remindOn: remindDate, includeDate: remindOnDate,includeTime: remindAtTime)
-                        newReminderTitle = ""
-                    })
+                    ReminderTitleTextField(placeholderTitle: rmbLocalized(.newReminderTextFielPlaceholder), newReminderTitle: $newReminderTitle, remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, remindDate: $remindDate)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 8)
                     .padding(.leading, 22)
