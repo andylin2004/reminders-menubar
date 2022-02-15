@@ -5,33 +5,34 @@ struct FormNewReminderView: View {
     @EnvironmentObject var remindersData: RemindersData
     @ObservedObject var userPreferences = UserPreferences.instance
     
-    @State var newReminderTitle = ""
+    @State var remindOnDate = false
+    @State var remindAtTime = false
+    @State var remindDate = Date()
     
     var body: some View {
         VStack {
             HStack {
-                TextField(rmbLocalized(.newReminderTextFielPlaceholder), text: $newReminderTitle, onCommit: {
-                    guard !newReminderTitle.isEmpty else { return }
+                VStack{
+                    ReminderTitleTextField(placeholderTitle: rmbLocalized(.newReminderTextFielPlaceholder), remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, remindDate: $remindDate)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 8)
+                    .padding(.leading, 22)
+                    .background(
+                        userPreferences.backgroundIsTransparent ?
+                            Color("textFieldBackgroundTransparent") :
+                            Color("textFieldBackground")
+                    )
+                    .cornerRadius(8)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .overlay(
+                        Image(systemName: "plus.circle.fill")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.gray)
+                            .padding(.leading, 8)
+                    )
                     
-                    RemindersService.instance.createNew(with: newReminderTitle, in: userPreferences.calendarForSaving)
-                    newReminderTitle = ""
-                })
-                .padding(.vertical, 8)
-                .padding(.horizontal, 8)
-                .padding(.leading, 22)
-                .background(
-                    userPreferences.backgroundIsTransparent ?
-                        Color("textFieldBackgroundTransparent") :
-                        Color("textFieldBackground")
-                )
-                .cornerRadius(8)
-                .textFieldStyle(PlainTextFieldStyle())
-                .overlay(
-                    Image(systemName: "plus.circle.fill")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.gray)
-                        .padding(.leading, 8)
-                )
+                    ReminderDateView(remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, date: $remindDate)
+                }
                 
                 Menu {
                     ForEach(remindersData.calendars, id: \.calendarIdentifier) { calendar in

@@ -3,12 +3,17 @@ import EventKit
 
 struct ReminderItemView: View {
     @EnvironmentObject var remindersData: RemindersData
+    @ObservedObject var userPreferences = UserPreferences.instance
     
     var reminder: EKReminder
     var showCalendarTitleOnDueDate = false
     @State var reminderItemIsHovered = false
     @State private var showingRemoveAlert = false
     @State private var hasBeenRemoved = false
+    @State private var showingDateChange = false
+    @State private var remindOnDate = false
+    @State private var remindAtTime = false
+    @State private var remindDate = Date()
     
     var body: some View {
         HStack(alignment: .top) {
@@ -39,10 +44,19 @@ struct ReminderItemView: View {
                         }
                         if !otherCalendars.isEmpty {
                             MoveToOptionMenu(reminder: reminder, availableCalendars: otherCalendars)
-                            
-                            VStack {
-                                Divider()
+                        }
+                        
+                        Button(action: {
+                            showingDateChange = true
+                        }){
+                            HStack {
+                                Image(systemName: "calendar")
+                                Text(rmbLocalized(.changeDueDate))
                             }
+                        }
+                        
+                        VStack {
+                            Divider()
                         }
                         
                         Button(action: {
@@ -60,6 +74,11 @@ struct ReminderItemView: View {
                     .padding(.trailing, 10)
                     .help(rmbLocalized(.remindersOptionsButtonHelp))
                     .opacity(reminderItemIsHovered ? 1 : 0)
+                    .popover(isPresented: $showingDateChange){
+                        ReminderDateView(remindOnDate: $remindOnDate, remindAtTime: $remindAtTime, date: $remindDate)
+                            .padding(10)
+                            .background(Color("backgroundTheme").opacity(userPreferences.backgroundIsTransparent ? 0.3 : 1.0))
+                    }
                 }
                 .alert(isPresented: $showingRemoveAlert) {
                     Alert(title: Text(rmbLocalized(.removeReminderAlertTitle)),
@@ -115,6 +134,19 @@ struct ReminderItemView: View {
                 RemindersService.instance.commitChanges()
             }
         })
+        .onChange(of: showingDateChange){change in
+            if change{
+                if reminder.hasDueDate{
+                    remindDate = Calendar.current.date(from: reminder.dueDateComponents!)!
+                    remindOnDate = true
+                    if reminder.dueDateComponents?.hour != nil && reminder.dueDateComponents?.minute != nil{
+                        remindAtTime = true
+                    }
+                }
+            }else{
+                RemindersService.instance.changeDate(reminder: reminder, remindOn: remindDate, includeDate: remindOnDate, includeTime: remindAtTime)
+            }
+        }
     }
 }
 

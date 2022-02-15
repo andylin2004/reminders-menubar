@@ -42,3 +42,7 @@ Grant permission in System Preferences to use %@.
 "okButton" = "Ok";
 "preferredLanguageMenu" = "Preferred language";
 "preferredLanguageSystemOptionButton" = "Use system language";
+"changeDueDate" = "Change Due Date";
+"remindOn" = "Remind on";
+"remindOnDay" = "Day";
+"remindAtTime" = "Time";
